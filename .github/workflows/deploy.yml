@@ -27,7 +27,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: "build/libs/*.jar,Dockerfile,compose.yaml,mosquitto/"
+        source: "build/libs/*.jar,dockerfile,compose.yaml,mosquitto/"
         target: "/home/ec2-user/app"
 
     - name: Execute Docker Compose on EC2
