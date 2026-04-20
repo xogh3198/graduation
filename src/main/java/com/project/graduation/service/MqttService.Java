@@ -28,7 +28,7 @@ public class MqttService {
             SensorData data = new SensorData();
             data.setTopic(topic);
             
-            // 토픽 구조가 device/sensor/{deviceId} 라고 가정하고 추출. 
+            // 토픽 구조가 device/sensor/{deviceId} 라고 가정하고 추출.   c
             String[] topicParts = topic.split("/");
             if (topicParts.length >= 3) {
                 data.setDeviceId(topicParts[2]); // 엔티티에 deviceId 필드 추가 필요
