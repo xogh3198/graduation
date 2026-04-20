@@ -1,19 +1,15 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/iot_db
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/iot_db}
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update # 엔티티에 맞춰 테이블 자동 생성
+      ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
 
-# 사용자 정의 MQTT 설정
 mqtt:
-  broker-url: tcp://localhost:1883
+  broker-url: ${MQTT_BROKER_URL:tcp://localhost:1883}
   client-id: spring-boot-backend-1
-  topic: device/sensor/#  # 'device/sensor/'로 시작하는 모든 토픽 구독
+  topic: device/sensor/#
