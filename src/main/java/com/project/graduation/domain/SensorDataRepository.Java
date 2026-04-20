@@ -1,4 +1,4 @@
-package com.example.iot.domain;
+package com.project.graduation.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
