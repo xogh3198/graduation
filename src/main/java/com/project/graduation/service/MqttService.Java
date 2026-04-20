@@ -40,7 +40,7 @@ public class MqttService {
 
             repository.save(data);
             
-            // TODO: 데이터 저장 시 이벤트(Event)를 발행하여 식물의 경험치나 상태를 업데이트하는 로직 트리거 가능
+            // TODO: 데이터 저장 시 이벤트(Event)를 발행하여 식물의 경험치나 상태를 업데이트하는 로직 트리거 가능. 
             
         } catch (Exception e) {
             log.error("Failed to parse and save message", e);

@@ -1,4 +1,4 @@
-package com.project.graduation.domain;
+package com.project.graduation.domain;   
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

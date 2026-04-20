@@ -17,7 +17,7 @@ public class SensorData {
     private String deviceId;
     private String topic;       // 어디서 온 데이터인지 (예: device/sensor/livingroom)
     private Double temperature; // 온도
-    private Double humidity;    // 습도  
+    private Double humidity;    // 습도    
     
     private LocalDateTime timestamp;
 
