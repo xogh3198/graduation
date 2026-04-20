@@ -1,4 +1,4 @@
-package com.example.iot.domain;
+package com.project.graduation.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
