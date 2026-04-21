@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # 1. PostgreSQL DB
   postgres:
-    image: postgres:latest
+    image: postgres:16
     container_name: postgres_db
     environment:
       POSTGRES_DB: iot_db
