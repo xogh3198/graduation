@@ -1,4 +1,8 @@
 spring:
+  security:
+    user:
+      name: user
+      password: 1234
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/iot_db}
     username: postgres
