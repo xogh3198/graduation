@@ -3,7 +3,7 @@ package com.project.graduation;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication //spring test
+@SpringBootApplication //spring test 1
 public class GraduationApplication {
 
     public static void main(String[] args) {
