@@ -24,5 +24,6 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       MQTT_BROKER_URL: tcp://mosquitto:1883
+      APP_INIT_DUMMY_DATA: ${APP_INIT_DUMMY_DATA:-true}
     depends_on:
       - mosquitto

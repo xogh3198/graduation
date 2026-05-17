@@ -25,3 +25,6 @@ jwt:
   secret: ${JWT_SECRET}
   access-expiration-ms: 3600000
   refresh-expiration-ms: 604800000
+
+app:
+  init-dummy-data: ${APP_INIT_DUMMY_DATA:true}

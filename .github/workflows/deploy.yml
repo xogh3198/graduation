@@ -49,10 +49,11 @@ jobs:
             echo "ERROR: JWT_SECRET GitHub Secret이 비어 있습니다."
             exit 1
           fi
-          if [ -z "$RDS_HOST" ] || [ -z "$RDS_DB_NAME" ] || [ -z "$RDS_PASSWORD" ]; then
-            echo "ERROR: RDS_HOST, RDS_DB_NAME, RDS_PASSWORD Secret을 확인하세요."
+          if [ -z "$RDS_HOST" ] || [ -z "$RDS_PASSWORD" ]; then
+            echo "ERROR: RDS_HOST, RDS_PASSWORD Secret을 확인하세요."
             exit 1
           fi
+          RDS_DB_NAME="${RDS_DB_NAME:-db-2ne1}"
           RDS_USERNAME="postgres"
           RDS_PORT="5432"
           SPRING_DATASOURCE_URL="jdbc:postgresql://${RDS_HOST}:${RDS_PORT}/${RDS_DB_NAME}"
