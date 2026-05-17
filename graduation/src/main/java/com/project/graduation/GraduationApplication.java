@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@SpringBootApplication //spring test
+@SpringBootApplication //spring 
 public class GraduationApplication {
 
     public static void main(String[] args) {
