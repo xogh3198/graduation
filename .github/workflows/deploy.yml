@@ -40,4 +40,4 @@ jobs:
           cd /home/ec2-user/app
           # 기존 컨테이너 종료 및 재빌드 후 실행 (모두 하이픈 추가 및 sudo 적용)
           sudo docker-compose down
-          sudo docker-compose up --build -d
+          sudo /usr/local/bin/docker-compose up --build -d
