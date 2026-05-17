@@ -40,4 +40,4 @@ jobs:
           cd /home/ec2-user/app
           # 기존 컨테이너 종료 및 재빌드 후 실행
           docker compose down
-          docker compose up --build -d
+          docker compose-up --build -d
