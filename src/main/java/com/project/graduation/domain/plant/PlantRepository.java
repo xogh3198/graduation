@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface PlantRepository extends JpaRepository<Plant, Long> {
     List<Plant> findByUserId(Long userId);
     Optional<Plant> findByIdAndUserId(Long id, Long userId);
+    Optional<Plant> findByDeviceId(String deviceId);
 }

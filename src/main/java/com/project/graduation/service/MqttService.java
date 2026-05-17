@@ -63,10 +63,8 @@ public class MqttService {
             }
 
             if (deviceId != null) {
-                Optional<Plant> plant = plantRepository.findAll().stream()
-                        .filter(p -> deviceId.equals(p.getDeviceId()))
-                        .findFirst();
-                plant.ifPresent(p -> data.setPlantId(p.getId()));
+                plantRepository.findByDeviceId(deviceId)
+                        .ifPresent(plant -> data.setPlantId(plant.getId()));
             }
 
             repository.save(data);
