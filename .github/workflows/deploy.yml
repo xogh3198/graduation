@@ -34,32 +34,28 @@ jobs:
     - name: Execute Docker Compose on EC2
       env:
         RDS_HOST: ${{ secrets.RDS_HOST }}
-        RDS_PORT: ${{ secrets.RDS_PORT }}
         RDS_DB_NAME: ${{ secrets.RDS_DB_NAME }}
-        RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
         RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-        SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        envs: RDS_HOST,RDS_PORT,RDS_DB_NAME,RDS_USERNAME,RDS_PASSWORD,SPRING_DATASOURCE_URL,JWT_SECRET
+        envs: RDS_HOST,RDS_DB_NAME,RDS_PASSWORD,JWT_SECRET
         script: |
           cd /home/ec2-user/app
           if [ -z "$JWT_SECRET" ]; then
             echo "ERROR: JWT_SECRET GitHub Secret이 비어 있습니다."
             exit 1
           fi
-          if [ -z "$RDS_USERNAME" ] || [ -z "$RDS_PASSWORD" ]; then
-            echo "ERROR: RDS_USERNAME 또는 RDS_PASSWORD Secret이 비어 있습니다."
+          if [ -z "$RDS_HOST" ] || [ -z "$RDS_DB_NAME" ] || [ -z "$RDS_PASSWORD" ]; then
+            echo "ERROR: RDS_HOST, RDS_DB_NAME, RDS_PASSWORD Secret을 확인하세요."
             exit 1
           fi
-          if [ -z "$SPRING_DATASOURCE_URL" ]; then
-            RDS_PORT="${RDS_PORT:-5432}"
-            SPRING_DATASOURCE_URL="jdbc:postgresql://${RDS_HOST}:${RDS_PORT}/${RDS_DB_NAME}"
-          fi
+          RDS_USERNAME="postgres"
+          RDS_PORT="5432"
+          SPRING_DATASOURCE_URL="jdbc:postgresql://${RDS_HOST}:${RDS_PORT}/${RDS_DB_NAME}"
           printf '%s\n' \
             "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}" \
             "SPRING_DATASOURCE_USERNAME=${RDS_USERNAME}" \
