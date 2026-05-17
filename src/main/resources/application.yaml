@@ -4,16 +4,24 @@ spring:
       name: user
       password: 1234
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/iot_db}
-    username: postgres
-    password: 1234
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 mqtt:
   broker-url: ${MQTT_BROKER_URL:tcp://localhost:1883}
   client-id: spring-boot-backend-1
   topic: device/sensor/#
+
+jwt:
+  secret: ${JWT_SECRET:graduation-project-secret-key-must-be-long-enough-for-hs256}
+  access-expiration-ms: 3600000
+  refresh-expiration-ms: 604800000

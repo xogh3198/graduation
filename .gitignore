@@ -36,6 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-.graduation.pem
-./graduation.pem
 *.pem
+.env
