@@ -26,7 +26,6 @@ public class MqttConfig {
     @Value("${mqtt.topic}")
     private String topic;
 
-    // 1. MQTT 클라이언트 팩토리 설정
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
@@ -37,13 +36,11 @@ public class MqttConfig {
         return factory;
     }
 
-    // 2. 메시지가 들어올 통로(채널) 생성
     @Bean
     public MessageChannel mqttInputChannel() {
         return new DirectChannel();
     }
 
-    // 3. 브로커로부터 메시지를 받아 채널로 넘겨주는 어댑터 설정
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
