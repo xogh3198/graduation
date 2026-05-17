@@ -48,6 +48,14 @@ jobs:
         envs: RDS_HOST,RDS_PORT,RDS_DB_NAME,RDS_USERNAME,RDS_PASSWORD,SPRING_DATASOURCE_URL,JWT_SECRET
         script: |
           cd /home/ec2-user/app
+          if [ -z "$JWT_SECRET" ]; then
+            echo "ERROR: JWT_SECRET GitHub Secret이 비어 있습니다."
+            exit 1
+          fi
+          if [ -z "$RDS_USERNAME" ] || [ -z "$RDS_PASSWORD" ]; then
+            echo "ERROR: RDS_USERNAME 또는 RDS_PASSWORD Secret이 비어 있습니다."
+            exit 1
+          fi
           if [ -z "$SPRING_DATASOURCE_URL" ]; then
             RDS_PORT="${RDS_PORT:-5432}"
             SPRING_DATASOURCE_URL="jdbc:postgresql://${RDS_HOST}:${RDS_PORT}/${RDS_DB_NAME}"

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 @Component
@@ -18,12 +20,26 @@ public class JwtTokenProvider {
     private final long refreshExpirationMs;
 
     public JwtTokenProvider(
-            @Value("${jwt.secret:graduation-project-secret-key-must-be-long-enough}") String secret,
+            @Value("${jwt.secret}") String secret,
             @Value("${jwt.access-expiration-ms:3600000}") long accessExpirationMs,
             @Value("${jwt.refresh-expiration-ms:604800000}") long refreshExpirationMs) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.secretKey = createSecretKey(secret);
         this.accessExpirationMs = accessExpirationMs;
         this.refreshExpirationMs = refreshExpirationMs;
+    }
+
+    private static SecretKey createSecretKey(String secret) {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException(
+                    "JWT_SECRET이 비어 있습니다. GitHub Secrets 또는 EC2 .env에 32자 이상 값을 설정하세요.");
+        }
+        try {
+            byte[] keyBytes = MessageDigest.getInstance("SHA-256")
+                    .digest(secret.getBytes(StandardCharsets.UTF_8));
+            return Keys.hmacShaKeyFor(keyBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("JWT 키 생성에 실패했습니다.", e);
+        }
     }
 
     public String createAccessToken(Long userId, String email) {
