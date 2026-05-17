@@ -64,6 +64,17 @@ jobs:
             "JWT_SECRET=${JWT_SECRET}" \
             > .env
           chmod 600 .env
+          echo "RDS에 데이터베이스 ${RDS_DB_NAME} 확인/생성..."
+          sudo docker run --rm \
+            -e PGPASSWORD="${RDS_PASSWORD}" \
+            postgres:16-alpine \
+            psql -h "${RDS_HOST}" -U postgres -d postgres -tAc \
+            "SELECT 1 FROM pg_database WHERE datname = '${RDS_DB_NAME}'" | grep -q 1 || \
+          sudo docker run --rm \
+            -e PGPASSWORD="${RDS_PASSWORD}" \
+            postgres:16-alpine \
+            psql -h "${RDS_HOST}" -U postgres -d postgres -v ON_ERROR_STOP=1 \
+            -c "CREATE DATABASE \"${RDS_DB_NAME}\""
           sudo docker compose down || true
           sudo docker compose up -d --build
           sudo docker compose ps
