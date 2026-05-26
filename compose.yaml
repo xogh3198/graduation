@@ -18,6 +18,8 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    volumes:
+      - ./certs:/app/certs:ro
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
@@ -25,5 +27,13 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       MQTT_BROKER_URL: tcp://mosquitto:1883
       APP_INIT_DUMMY_DATA: ${APP_INIT_DUMMY_DATA:-true}
+      AWS_IOT_ENABLED: ${AWS_IOT_ENABLED:-false}
+      AWS_IOT_ENDPOINT: ${AWS_IOT_ENDPOINT:-amtgq6rjeeepu-ats.iot.us-east-1.amazonaws.com}
+      AWS_IOT_CLIENT_ID: ${AWS_IOT_CLIENT_ID:-graduation-backend}
+      AWS_IOT_PHOTO_TOPIC: ${AWS_IOT_PHOTO_TOPIC:-plants/+/status/photo}
+      AWS_IOT_CERT_PATH: ${AWS_IOT_CERT_PATH:-}
+      AWS_IOT_PRIVATE_KEY_PATH: ${AWS_IOT_PRIVATE_KEY_PATH:-}
+      AWS_IOT_ROOT_CA_PATH: ${AWS_IOT_ROOT_CA_PATH:-}
+      AI_SERVER_BASE_URL: ${AI_SERVER_BASE_URL:-http://host.docker.internal:30800}
     depends_on:
       - mosquitto

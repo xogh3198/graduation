@@ -38,3 +38,7 @@ out/
 
 *.pem
 .env
+certs/*.pem
+certs/*.crt
+certs/*.key
+!certs/README.md

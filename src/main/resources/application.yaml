@@ -28,3 +28,19 @@ jwt:
 
 app:
   init-dummy-data: ${APP_INIT_DUMMY_DATA:true}
+
+aws:
+  iot:
+    enabled: ${AWS_IOT_ENABLED:false}
+    endpoint: ${AWS_IOT_ENDPOINT:amtgq6rjeeepu-ats.iot.us-east-1.amazonaws.com}
+    client-id: ${AWS_IOT_CLIENT_ID:graduation-backend}
+    photo-topic: ${AWS_IOT_PHOTO_TOPIC:plants/+/status/photo}
+    certificate-path: ${AWS_IOT_CERT_PATH:}
+    private-key-path: ${AWS_IOT_PRIVATE_KEY_PATH:}
+    root-ca-path: ${AWS_IOT_ROOT_CA_PATH:}
+
+ai:
+  server:
+    base-url: ${AI_SERVER_BASE_URL:http://localhost:30800}
+    vision-path: ${AI_SERVER_VISION_PATH:/ai/v1/analyze/vision}
+    death-path: ${AI_SERVER_DEATH_PATH:/ai/v1/analyze/death}

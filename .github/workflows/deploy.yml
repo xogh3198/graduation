@@ -37,12 +37,20 @@ jobs:
         RDS_DB_NAME: ${{ secrets.RDS_DB_NAME }}
         RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        AWS_IOT_ENABLED: ${{ secrets.AWS_IOT_ENABLED }}
+        AWS_IOT_ENDPOINT: ${{ secrets.AWS_IOT_ENDPOINT }}
+        AWS_IOT_CLIENT_ID: ${{ secrets.AWS_IOT_CLIENT_ID }}
+        AWS_IOT_PHOTO_TOPIC: ${{ secrets.AWS_IOT_PHOTO_TOPIC }}
+        AWS_IOT_CERT_PATH: ${{ secrets.AWS_IOT_CERT_PATH }}
+        AWS_IOT_PRIVATE_KEY_PATH: ${{ secrets.AWS_IOT_PRIVATE_KEY_PATH }}
+        AWS_IOT_ROOT_CA_PATH: ${{ secrets.AWS_IOT_ROOT_CA_PATH }}
+        AI_SERVER_BASE_URL: ${{ secrets.AI_SERVER_BASE_URL }}
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        envs: RDS_HOST,RDS_DB_NAME,RDS_PASSWORD,JWT_SECRET
+        envs: RDS_HOST,RDS_DB_NAME,RDS_PASSWORD,JWT_SECRET,AWS_IOT_ENABLED,AWS_IOT_ENDPOINT,AWS_IOT_CLIENT_ID,AWS_IOT_PHOTO_TOPIC,AWS_IOT_CERT_PATH,AWS_IOT_PRIVATE_KEY_PATH,AWS_IOT_ROOT_CA_PATH,AI_SERVER_BASE_URL
         script: |
           cd /home/ec2-user/app
           if [ -z "$JWT_SECRET" ]; then
@@ -62,6 +70,14 @@ jobs:
             "SPRING_DATASOURCE_USERNAME=${RDS_USERNAME}" \
             "SPRING_DATASOURCE_PASSWORD=${RDS_PASSWORD}" \
             "JWT_SECRET=${JWT_SECRET}" \
+            "AWS_IOT_ENABLED=${AWS_IOT_ENABLED:-false}" \
+            "AWS_IOT_ENDPOINT=${AWS_IOT_ENDPOINT:-amtgq6rjeeepu-ats.iot.us-east-1.amazonaws.com}" \
+            "AWS_IOT_CLIENT_ID=${AWS_IOT_CLIENT_ID:-graduation-backend}" \
+            "AWS_IOT_PHOTO_TOPIC=${AWS_IOT_PHOTO_TOPIC:-plants/+/status/photo}" \
+            "AWS_IOT_CERT_PATH=${AWS_IOT_CERT_PATH:-}" \
+            "AWS_IOT_PRIVATE_KEY_PATH=${AWS_IOT_PRIVATE_KEY_PATH:-}" \
+            "AWS_IOT_ROOT_CA_PATH=${AWS_IOT_ROOT_CA_PATH:-}" \
+            "AI_SERVER_BASE_URL=${AI_SERVER_BASE_URL:-http://localhost:30800}" \
             > .env
           chmod 600 .env
           echo "RDS에 데이터베이스 ${RDS_DB_NAME} 확인/생성..."
