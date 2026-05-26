@@ -9,7 +9,9 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.Reader;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -28,15 +30,15 @@ public final class AwsIotSslSocketFactory {
 
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
         trustStore.load(null, null);
-        try (Reader caReader = new FileReader(rootCaPath)) {
-            X509Certificate caCert = (X509Certificate) certificateFactory.generateCertificate(caReader);
+        try (InputStream caStream = new FileInputStream(rootCaPath)) {
+            X509Certificate caCert = (X509Certificate) certificateFactory.generateCertificate(caStream);
             trustStore.setCertificateEntry("aws-root-ca", caCert);
         }
 
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null, null);
-        try (Reader certReader = new FileReader(certificatePath)) {
-            X509Certificate clientCert = (X509Certificate) certificateFactory.generateCertificate(certReader);
+        try (InputStream certStream = new FileInputStream(certificatePath)) {
+            X509Certificate clientCert = (X509Certificate) certificateFactory.generateCertificate(certStream);
             keyStore.setCertificateEntry("client-cert", clientCert);
             PrivateKey privateKey = loadPrivateKey(privateKeyPath);
             keyStore.setKeyEntry("client-key", privateKey, "".toCharArray(), new Certificate[]{clientCert});
