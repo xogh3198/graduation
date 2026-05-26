@@ -14,7 +14,7 @@ AWS_IOT_ENDPOINT=amtgq6rjeeepu-ats.iot.us-east-1.amazonaws.com
 AWS_IOT_CERT_PATH=/app/certs/xxxx-certificate.pem.crt
 AWS_IOT_PRIVATE_KEY_PATH=/app/certs/xxxx-private.pem.key
 AWS_IOT_ROOT_CA_PATH=/app/certs/AmazonRootCA1.pem
-AI_SERVER_BASE_URL=http://<Windows-Tailscale-IP>:30800
+AI_SERVER_BASE_URL=http://100.95.251.67:30800
 ```
 
 ## MQTT 토픽 (라즈베리파이 → 메인 서버)

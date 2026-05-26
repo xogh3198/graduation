@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "ai.server")
 public class AiServerProperties {
 
-    private String baseUrl = "http://localhost:30800";
+    private String baseUrl = "http://100.95.251.67:30800";
     private String visionPath = "/ai/v1/analyze/vision";
     private String deathPath = "/ai/v1/analyze/death";
 }

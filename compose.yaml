@@ -34,6 +34,6 @@ services:
       AWS_IOT_CERT_PATH: ${AWS_IOT_CERT_PATH:-}
       AWS_IOT_PRIVATE_KEY_PATH: ${AWS_IOT_PRIVATE_KEY_PATH:-}
       AWS_IOT_ROOT_CA_PATH: ${AWS_IOT_ROOT_CA_PATH:-}
-      AI_SERVER_BASE_URL: ${AI_SERVER_BASE_URL:-http://host.docker.internal:30800}
+      AI_SERVER_BASE_URL: ${AI_SERVER_BASE_URL:-http://100.95.251.67:30800}
     depends_on:
       - mosquitto

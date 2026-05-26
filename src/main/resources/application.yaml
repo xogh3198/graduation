@@ -41,6 +41,6 @@ aws:
 
 ai:
   server:
-    base-url: ${AI_SERVER_BASE_URL:http://localhost:30800}
+    base-url: ${AI_SERVER_BASE_URL:http://100.95.251.67:30800}
     vision-path: ${AI_SERVER_VISION_PATH:/ai/v1/analyze/vision}
     death-path: ${AI_SERVER_DEATH_PATH:/ai/v1/analyze/death}
