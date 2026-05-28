@@ -35,5 +35,7 @@ services:
       AWS_IOT_PRIVATE_KEY_PATH: ${AWS_IOT_PRIVATE_KEY_PATH:-}
       AWS_IOT_ROOT_CA_PATH: ${AWS_IOT_ROOT_CA_PATH:-}
       AI_SERVER_BASE_URL: ${AI_SERVER_BASE_URL:-http://100.95.251.67:30800}
+      FCM_ENABLED: ${FCM_ENABLED:-false}
+      FCM_SERVER_KEY: ${FCM_SERVER_KEY:-}
     depends_on:
       - mosquitto

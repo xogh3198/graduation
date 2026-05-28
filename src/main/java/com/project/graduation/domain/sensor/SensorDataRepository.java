@@ -12,6 +12,8 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
 
     Optional<SensorData> findFirstByPlantIdOrderByTimestampDesc(Long plantId);
 
+    List<SensorData> findTop30ByPlantIdOrderByTimestampDesc(Long plantId);
+
     List<SensorData> findByPlantIdAndTypeAndTimestampBetweenOrderByTimestampAsc(
             Long plantId, SensorType type, LocalDateTime start, LocalDateTime end);
 

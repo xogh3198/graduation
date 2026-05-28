@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-@EnableConfigurationProperties({AwsIotProperties.class, AiServerProperties.class})
+@EnableConfigurationProperties({AwsIotProperties.class, AiServerProperties.class, FcmProperties.class})
 public class AiClientConfig {
 
     @Bean

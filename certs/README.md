@@ -25,7 +25,9 @@ AI_SERVER_BASE_URL=http://100.95.251.67:30800
 
 ```json
 {
-  "plantId": "1",
+  "plantId": "plant-1",
   "imageUrl": "https://버킷.s3.amazonaws.com/plants/plant-1/photo.jpg"
 }
 ```
+
+plantId 규칙 상세: [docs/PLANT_ID.md](../docs/PLANT_ID.md)

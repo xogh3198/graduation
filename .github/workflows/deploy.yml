@@ -45,12 +45,14 @@ jobs:
         AWS_IOT_PRIVATE_KEY_PATH: ${{ secrets.AWS_IOT_PRIVATE_KEY_PATH }}
         AWS_IOT_ROOT_CA_PATH: ${{ secrets.AWS_IOT_ROOT_CA_PATH }}
         AI_SERVER_BASE_URL: ${{ secrets.AI_SERVER_BASE_URL }}
+        FCM_ENABLED: ${{ secrets.FCM_ENABLED }}
+        FCM_SERVER_KEY: ${{ secrets.FCM_SERVER_KEY }}
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        envs: RDS_HOST,RDS_DB_NAME,RDS_PASSWORD,JWT_SECRET,AWS_IOT_ENABLED,AWS_IOT_ENDPOINT,AWS_IOT_CLIENT_ID,AWS_IOT_PHOTO_TOPIC,AWS_IOT_CERT_PATH,AWS_IOT_PRIVATE_KEY_PATH,AWS_IOT_ROOT_CA_PATH,AI_SERVER_BASE_URL
+        envs: RDS_HOST,RDS_DB_NAME,RDS_PASSWORD,JWT_SECRET,AWS_IOT_ENABLED,AWS_IOT_ENDPOINT,AWS_IOT_CLIENT_ID,AWS_IOT_PHOTO_TOPIC,AWS_IOT_CERT_PATH,AWS_IOT_PRIVATE_KEY_PATH,AWS_IOT_ROOT_CA_PATH,AI_SERVER_BASE_URL,FCM_ENABLED,FCM_SERVER_KEY
         script: |
           cd /home/ec2-user/app
           if [ -z "$JWT_SECRET" ]; then
@@ -78,6 +80,8 @@ jobs:
             "AWS_IOT_PRIVATE_KEY_PATH=${AWS_IOT_PRIVATE_KEY_PATH:-}" \
             "AWS_IOT_ROOT_CA_PATH=${AWS_IOT_ROOT_CA_PATH:-}" \
             "AI_SERVER_BASE_URL=${AI_SERVER_BASE_URL:-http://100.95.251.67:30800}" \
+            "FCM_ENABLED=${FCM_ENABLED:-false}" \
+            "FCM_SERVER_KEY=${FCM_SERVER_KEY:-}" \
             > .env
           chmod 600 .env
           echo "RDS에 데이터베이스 ${RDS_DB_NAME} 확인/생성..."

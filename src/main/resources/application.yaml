@@ -44,3 +44,7 @@ ai:
     base-url: ${AI_SERVER_BASE_URL:http://100.95.251.67:30800}
     vision-path: ${AI_SERVER_VISION_PATH:/ai/v1/analyze/vision}
     death-path: ${AI_SERVER_DEATH_PATH:/ai/v1/analyze/death}
+
+fcm:
+  enabled: ${FCM_ENABLED:false}
+  server-key: ${FCM_SERVER_KEY:}
