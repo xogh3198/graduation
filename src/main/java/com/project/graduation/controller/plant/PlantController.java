@@ -1,6 +1,7 @@
 package com.project.graduation.controller.plant;
 
 import com.project.graduation.dto.plant.*;
+import com.project.graduation.dto.common.StatusResponse;
 import com.project.graduation.security.AuthUser;
 import com.project.graduation.service.plant.PlantService;
 import jakarta.validation.Valid;
@@ -28,5 +29,11 @@ public class PlantController {
             @PathVariable Long plantId,
             @Valid @RequestBody UpdatePlantNameRequest request) {
         return ResponseEntity.ok(plantService.updateName(AuthUser.getCurrentUserId(), plantId, request));
+    }
+
+    @DeleteMapping("/{plantId}")
+    public ResponseEntity<StatusResponse> deletePlant(@PathVariable Long plantId) {
+        plantService.deletePlant(AuthUser.getCurrentUserId(), plantId);
+        return ResponseEntity.ok(new StatusResponse("success"));
     }
 }

@@ -3,6 +3,8 @@ package com.project.graduation.config;
 import com.project.graduation.domain.plant.Plant;
 import com.project.graduation.domain.plant.PlantRepository;
 import com.project.graduation.domain.plant.PlantStatus;
+import com.project.graduation.domain.notification.NotificationHistory;
+import com.project.graduation.domain.notification.NotificationHistoryRepository;
 import com.project.graduation.domain.report.DeathReport;
 import com.project.graduation.domain.report.DeathReportRepository;
 import com.project.graduation.domain.sensor.SensorData;
@@ -31,6 +33,7 @@ public class DataInitializer implements ApplicationRunner {
     private final PlantRepository plantRepository;
     private final SensorDataRepository sensorDataRepository;
     private final DeathReportRepository deathReportRepository;
+    private final NotificationHistoryRepository notificationHistoryRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.init-dummy-data:true}")
@@ -61,6 +64,8 @@ public class DataInitializer implements ApplicationRunner {
         createSensorHistory(plant2.getId(), "pi-002");
 
         createDeathReport(plant3.getId());
+        createNotification(user.getId(), "바질이", "습도가 부족합니다", "critical", LocalDateTime.now().minusHours(3), false);
+        createNotification(user.getId(), "쑥쑥이", "조도가 적정 범위로 회복되었습니다", "good", LocalDateTime.now().minusHours(1), true);
 
         log.info("✅ db-2ne1 더미 데이터 초기화 완료 (user: test@example.com / password123)");
     }
@@ -138,5 +143,17 @@ public class DataInitializer implements ApplicationRunner {
         report.setDescription("토양 수분이 지속적으로 80%를 초과하여 뿌리가 호흡하지 못했습니다.");
         report.setTips("다음 식물을 키울 때는 물 빠짐이 좋은 흙을 사용하고, 겉흙이 마를 때만 급수하세요.");
         deathReportRepository.save(report);
+    }
+
+    private void createNotification(Long userId, String plantName, String message,
+                                    String type, LocalDateTime createdAt, boolean isRead) {
+        NotificationHistory notification = new NotificationHistory();
+        notification.setUserId(userId);
+        notification.setPlantName(plantName);
+        notification.setMessage(message);
+        notification.setType(type);
+        notification.setCreatedAt(createdAt);
+        notification.setIsRead(isRead);
+        notificationHistoryRepository.save(notification);
     }
 }

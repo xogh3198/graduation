@@ -1,6 +1,7 @@
 package com.project.graduation.controller.user;
 
 import com.project.graduation.dto.common.StatusResponse;
+import com.project.graduation.dto.notification.NotificationResponse;
 import com.project.graduation.dto.plant.PlantSummaryResponse;
 import com.project.graduation.dto.user.FcmTokenRequest;
 import com.project.graduation.security.AuthUser;
@@ -30,5 +31,10 @@ public class UserController {
     @GetMapping("/me/plants")
     public ResponseEntity<List<PlantSummaryResponse>> getMyPlants() {
         return ResponseEntity.ok(plantService.getMyPlants(AuthUser.getCurrentUserId()));
+    }
+
+    @GetMapping("/me/notifications")
+    public ResponseEntity<List<NotificationResponse>> getMyNotifications() {
+        return ResponseEntity.ok(userService.getMyNotifications(AuthUser.getCurrentUserId()));
     }
 }

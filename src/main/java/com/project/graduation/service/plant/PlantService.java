@@ -47,6 +47,12 @@ public class PlantService {
         return new UpdatePlantNameResponse(plant.getId(), plant.getName(), "success");
     }
 
+    @Transactional
+    public void deletePlant(Long userId, Long plantId) {
+        Plant plant = getOwnedPlant(userId, plantId);
+        plantRepository.delete(plant);
+    }
+
     public Plant getOwnedPlant(Long userId, Long plantId) {
         return plantRepository.findByIdAndUserId(plantId, userId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 식물을 찾을 수 없습니다."));
