@@ -10,6 +10,10 @@ import java.util.Optional;
 
 public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
 
+    boolean existsByDeviceId(String deviceId);
+
+    List<SensorData> findByDeviceIdAndPlantIdIsNull(String deviceId);
+
     Optional<SensorData> findFirstByPlantIdOrderByTimestampDesc(Long plantId);
 
     List<SensorData> findTop30ByPlantIdOrderByTimestampDesc(Long plantId);

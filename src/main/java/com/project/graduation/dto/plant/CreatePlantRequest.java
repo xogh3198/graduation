@@ -21,4 +21,8 @@ public class CreatePlantRequest {
     private Integer age;
 
     private Integer level = 1;
+
+    /** 라즈베리 MQTT 센서 토픽용 (예: pi-001 → device/sensor/pi-001) */
+    @NotBlank
+    private String deviceId;
 }
