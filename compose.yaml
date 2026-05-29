@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: graduation_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: graduation
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres1234
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
   mosquitto:
     image: eclipse-mosquitto:latest
     container_name: mosquitto_broker
@@ -36,6 +49,10 @@ services:
       AWS_IOT_ROOT_CA_PATH: ${AWS_IOT_ROOT_CA_PATH:-}
       AI_SERVER_BASE_URL: ${AI_SERVER_BASE_URL:-http://100.95.251.67:30800}
       FCM_ENABLED: ${FCM_ENABLED:-false}
-      FCM_SERVER_KEY: ${FCM_SERVER_KEY:-}
+      FCM_SERVICE_ACCOUNT_PATH: ${FCM_SERVICE_ACCOUNT_PATH:-}
     depends_on:
+      - postgres
       - mosquitto
+
+volumes:
+  pgdata:

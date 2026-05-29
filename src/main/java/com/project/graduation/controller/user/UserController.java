@@ -4,6 +4,7 @@ import com.project.graduation.dto.common.StatusResponse;
 import com.project.graduation.dto.notification.NotificationResponse;
 import com.project.graduation.dto.plant.PlantSummaryResponse;
 import com.project.graduation.dto.user.FcmTokenRequest;
+import com.project.graduation.dto.user.UserMeResponse;
 import com.project.graduation.security.AuthUser;
 import com.project.graduation.service.plant.PlantService;
 import com.project.graduation.service.user.UserService;
@@ -36,5 +37,16 @@ public class UserController {
     @GetMapping("/me/notifications")
     public ResponseEntity<List<NotificationResponse>> getMyNotifications() {
         return ResponseEntity.ok(userService.getMyNotifications(AuthUser.getCurrentUserId()));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserMeResponse> getMe() {
+        return ResponseEntity.ok(userService.getMe(AuthUser.getCurrentUserId()));
+    }
+
+    @GetMapping("/me/fcm-test")
+    public ResponseEntity<StatusResponse> testFcm() {
+        userService.testFcm(AuthUser.getCurrentUserId());
+        return ResponseEntity.ok(new StatusResponse("FCM 테스트 요청 성공"));
     }
 }

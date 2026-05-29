@@ -9,5 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "fcm")
 public class FcmProperties {
     private boolean enabled = false;
-    private String serverKey = "";
+    /** 서비스 계정 JSON 파일 경로 (classpath: 또는 file: 접두어 가능) */
+    private String serviceAccountPath = "";
 }

@@ -42,3 +42,6 @@ certs/*.pem
 certs/*.crt
 certs/*.key
 !certs/README.md
+
+# Firebase account key
+firebase-service-account.json
