@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -45,8 +46,14 @@ public class UserController {
     }
 
     @GetMapping("/me/fcm-test")
-    public ResponseEntity<StatusResponse> testFcm() {
+    public ResponseEntity<Map<String, String>> testFcm() {
         userService.testFcm(AuthUser.getCurrentUserId());
-        return ResponseEntity.ok(new StatusResponse("FCM 테스트 요청 성공"));
+        return ResponseEntity.ok(Map.of("status", "FCM 테스트 요청 성공"));
+    }
+
+    @GetMapping("/me/sensor-test")
+    public ResponseEntity<Map<String, String>> testSensorAlert() {
+        userService.testSensorAlert(AuthUser.getCurrentUserId());
+        return ResponseEntity.ok(Map.of("status", "가상 센서(흙 마름) 경고 발생 테스트 성공"));
     }
 }
