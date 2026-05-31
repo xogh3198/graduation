@@ -42,3 +42,7 @@ certs/*.pem
 certs/*.crt
 certs/*.key
 !certs/README.md
+
+# Firebase service account (비밀키 — 커밋 금지)
+firebase-service-account.json
+**/firebase-service-account.json

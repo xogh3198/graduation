@@ -9,5 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "fcm")
 public class FcmProperties {
     private boolean enabled = false;
-    private String serverKey = "";
+    /** classpath:firebase-service-account.json 또는 file:/path/to/json */
+    private String serviceAccountPath = "";
 }

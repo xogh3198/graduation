@@ -47,4 +47,4 @@ ai:
 
 fcm:
   enabled: ${FCM_ENABLED:false}
-  server-key: ${FCM_SERVER_KEY:}
+  service-account-path: ${FCM_SERVICE_ACCOUNT_PATH:file:/app/firebase-service-account.json}
