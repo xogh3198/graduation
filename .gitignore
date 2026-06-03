@@ -36,13 +36,26 @@ out/
 ### VS Code ###
 .vscode/
 
-*.pem
+### Secrets — EC2 / AWS IoT / env (커밋 금지) ###
 .env
-certs/*.pem
-certs/*.crt
-certs/*.key
+.env.*
+!.env.example
+
+# PEM, 인증서, 개인키 (프로젝트 루트 + certs/)
+*.pem
+*.crt
+*.key
+*-private.pem.key
+*certificate.pem.crt
+AmazonRootCA1.pem
+
+# EC2 SSH 키
+*_key.pem
+2NE1_key.pem
+
+certs/*
 !certs/README.md
 
-# Firebase service account (비밀키 — 커밋 금지)
+# Firebase service account
 firebase-service-account.json
 **/firebase-service-account.json

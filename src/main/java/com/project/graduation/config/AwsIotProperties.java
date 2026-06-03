@@ -13,6 +13,7 @@ public class AwsIotProperties {
     private String endpoint = "amtgq6rjeeepu-ats.iot.us-east-1.amazonaws.com";
     private String clientId = "graduation-backend";
     private String photoTopic = "plants/+/status/photo";
+    private String telemetryTopic = "plants/+/telemetry";
     private String certificatePath;
     private String privateKeyPath;
     private String rootCaPath;

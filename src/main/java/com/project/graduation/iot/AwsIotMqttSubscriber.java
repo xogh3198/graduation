@@ -3,7 +3,9 @@ package com.project.graduation.iot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.graduation.config.AwsIotProperties;
 import com.project.graduation.dto.iot.PhotoUploadMqttPayload;
+import com.project.graduation.dto.iot.TelemetryMqttPayload;
 import com.project.graduation.service.ai.PhotoAnalysisService;
+import com.project.graduation.service.iot.IotTelemetryService;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ public class AwsIotMqttSubscriber implements MqttCallback {
 
     private final AwsIotProperties awsIotProperties;
     private final PhotoAnalysisService photoAnalysisService;
+    private final IotTelemetryService iotTelemetryService;
     private final ObjectMapper objectMapper;
 
     private MqttClient mqttClient;
@@ -49,10 +52,13 @@ public class AwsIotMqttSubscriber implements MqttCallback {
         options.setConnectionTimeout(30);
         options.setKeepAliveInterval(60);
 
-        log.info("AWS IoT Core 연결 시도 endpoint={}, topic={}",
-                awsIotProperties.getEndpoint(), awsIotProperties.getPhotoTopic());
+        String photoTopic = awsIotProperties.getPhotoTopic();
+        String telemetryTopic = awsIotProperties.getTelemetryTopic();
+
+        log.info("AWS IoT Core 연결 시도 endpoint={}, photoTopic={}, telemetryTopic={}",
+                awsIotProperties.getEndpoint(), photoTopic, telemetryTopic);
         mqttClient.connect(options);
-        mqttClient.subscribe(awsIotProperties.getPhotoTopic(), 1);
+        mqttClient.subscribe(new String[]{photoTopic, telemetryTopic}, new int[]{1, 1});
         log.info("AWS IoT Core 구독 시작 완료");
     }
 
@@ -63,13 +69,18 @@ public class AwsIotMqttSubscriber implements MqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) {
+        String payload = new String(message.getPayload());
         try {
-            String payload = new String(message.getPayload());
-            log.debug("AWS IoT MQTT 수신 topic={}, payload={}", topic, payload);
+            if (isTelemetryTopic(topic, payload)) {
+                TelemetryMqttPayload event = objectMapper.readValue(payload, TelemetryMqttPayload.class);
+                iotTelemetryService.handleTelemetryEvent(event, topic);
+                return;
+            }
+
             PhotoUploadMqttPayload event = objectMapper.readValue(payload, PhotoUploadMqttPayload.class);
             photoAnalysisService.handlePhotoUploadEvent(event, topic);
         } catch (Exception e) {
-            log.error("AWS IoT MQTT 메시지 처리 실패 topic={}", topic, e);
+            log.error("AWS IoT MQTT 메시지 처리 실패 topic={}, payload={}", topic, payload, e);
         }
     }
 
@@ -88,6 +99,14 @@ public class AwsIotMqttSubscriber implements MqttCallback {
         } catch (Exception e) {
             log.warn("AWS IoT MQTT 종료 중 오류", e);
         }
+    }
+
+    private boolean isTelemetryTopic(String topic, String payload) {
+        if (topic != null && topic.endsWith("/telemetry")) {
+            return true;
+        }
+        return payload.contains("\"messageType\":\"telemetry\"")
+                || payload.contains("\"messageType\": \"telemetry\"");
     }
 
     private void validateCertificatePaths() {

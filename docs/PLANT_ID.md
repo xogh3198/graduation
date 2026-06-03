@@ -7,7 +7,8 @@
 | DB PK | `Plant.id` (Long) | `1` |
 | REST API path | Long (`/api/v1/plants/1`) | `1` |
 | AI 서버 요청 | `plant-{id}` | `plant-1` |
-| AWS IoT MQTT topic | `plants/plant-{id}/status/photo` | `plants/plant-1/status/photo` |
+| AWS IoT MQTT topic (사진) | `plants/plant-{id}/status/photo` | `plants/plant-1/status/photo` |
+| AWS IoT MQTT topic (센서) | `plants/plant-{id}/telemetry` | `plants/plant-1/telemetry` |
 | 라즈베리 센서 MQTT | `device/sensor/{deviceId}` | `device/sensor/pi-001` |
 | 디바이스 식별 | `Plant.deviceId` | `pi-001` |
 
@@ -22,6 +23,33 @@
   }
   ```
 - `plantId` 생략 시 topic의 두 번째 세그먼트(`plant-1`) 사용
+
+## MQTT 센서 텔레메트리 (AWS IoT Core)
+
+- **Topic:** `plants/plant-1/telemetry`
+- **Payload:**
+  ```json
+  {
+    "messageType": "telemetry",
+    "readingId": 123,
+    "plantId": "plant-1",
+    "deviceId": "rpi4-001",
+    "timestamp": "2026-05-31T16:30:00+09:00",
+    "sensors": {
+      "lux": 850.2,
+      "soilRaw": 18320,
+      "soilVoltage": 1.82,
+      "soilMoisturePct": 64.5,
+      "temperatureC": null,
+      "humidityPct": null
+    },
+    "actuators": {
+      "growLedBrightnessPct": 0
+    }
+  }
+  ```
+- `lux` → `light`, `soilMoisturePct` → `moisture`/`soilStatus`, `temperatureC`/`humidityPct` 매핑
+- `plantId` 또는 `deviceId`로 DB 식물 연결
 
 ## 프론트 테스트용 데모 라즈베리 (센서만)
 

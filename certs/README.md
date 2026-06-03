@@ -19,9 +19,12 @@ AI_SERVER_BASE_URL=http://100.95.251.67:30800
 
 ## MQTT 토픽 (라즈베리파이 → 메인 서버)
 
-`plants/{plantId}/status/photo`
+| 용도 | 토픽 | payload |
+|------|------|---------|
+| 센서 | `plants/plant-1/telemetry` | `messageType`, `sensors.*` |
+| 사진(S3) | `plants/plant-1/status/photo` | `plantId`, `imageUrl` |
 
-페이로드 예:
+페이로드 예 (사진):
 
 ```json
 {
