@@ -22,6 +22,7 @@ AI_SERVER_BASE_URL=http://100.95.251.67:30800
 | 용도 | 토픽 | payload |
 |------|------|---------|
 | 센서 | `plants/plant-1/telemetry` | `messageType`, `sensors.*` |
+| 제어(급수/LED) | `plants/plant-1/command` | `messageType`, `actuators.*` |
 | 사진(S3) | `plants/plant-1/status/photo` | `plantId`, `imageUrl` |
 
 페이로드 예 (사진):

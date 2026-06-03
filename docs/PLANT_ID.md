@@ -9,6 +9,7 @@
 | AI 서버 요청 | `plant-{id}` | `plant-1` |
 | AWS IoT MQTT topic (사진) | `plants/plant-{id}/status/photo` | `plants/plant-1/status/photo` |
 | AWS IoT MQTT topic (센서) | `plants/plant-{id}/telemetry` | `plants/plant-1/telemetry` |
+| AWS IoT MQTT topic (제어) | `plants/plant-{id}/command` | `plants/plant-1/command` |
 | 라즈베리 센서 MQTT | `device/sensor/{deviceId}` | `device/sensor/pi-001` |
 | 디바이스 식별 | `Plant.deviceId` | `pi-001` |
 
@@ -50,6 +51,45 @@
   ```
 - `lux` → `light`, `soilMoisturePct` → `moisture`/`soilStatus`, `temperatureC`/`humidityPct` 매핑
 - `plantId` 또는 `deviceId`로 DB 식물 연결
+
+## MQTT 액추에이터 제어 (AWS IoT Core, 서버 → 라즈베리)
+
+- **Topic:** `plants/plant-1/command`
+- **급수 API:** `POST /api/v1/plants/{plantId}/control/water`
+  ```json
+  { "amount": 100 }
+  ```
+  **응답:**
+  ```json
+  { "status": "success", "message": "100ml 급수 명령을 전송했습니다.", "amount": 100 }
+  ```
+- **조명 API:** `POST /api/v1/plants/{plantId}/control/led`
+  ```json
+  { "status": "ON" }
+  ```
+  **응답:**
+  ```json
+  { "status": "success", "message": "LED가 켜졌습니다.", "brightnessPct": 100 }
+  ```
+- **IoT publish payload (급수):**
+  ```json
+  {
+    "messageType": "command",
+    "plantId": "plant-1",
+    "deviceId": "rpi4-001",
+    "actuators": { "waterMl": 100 }
+  }
+  ```
+- **IoT publish payload (조명 ON):**
+  ```json
+  {
+    "messageType": "command",
+    "plantId": "plant-1",
+    "deviceId": "rpi4-001",
+    "actuators": { "growLedBrightnessPct": 100 }
+  }
+  ```
+- `telemetry` 토픽은 **센서 업링크 전용**, 제어는 **`command` 토픽** 사용
 
 ## 프론트 테스트용 데모 라즈베리 (센서만)
 

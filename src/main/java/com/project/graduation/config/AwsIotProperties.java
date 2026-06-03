@@ -14,6 +14,8 @@ public class AwsIotProperties {
     private String clientId = "graduation-backend";
     private String photoTopic = "plants/+/status/photo";
     private String telemetryTopic = "plants/+/telemetry";
+    /** publish topic: plants/plant-1/{suffix} */
+    private String commandTopicSuffix = "command";
     private String certificatePath;
     private String privateKeyPath;
     private String rootCaPath;
