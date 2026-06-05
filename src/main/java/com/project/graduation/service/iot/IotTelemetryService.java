@@ -116,7 +116,8 @@ public class IotTelemetryService {
         if (data.getSoilMoisture() != null && data.getSoilMoisture() < 30.0) {
             msgBuilder.append("흙이 말랐습니다(").append(data.getSoilMoisture()).append("%). ");
             shouldAlert = true;
-        } else if (data.getMoisture() != null && data.getMoisture() < 20.0) {
+        }
+        if (data.getMoisture() != null && data.getMoisture() < 20.0) {
             msgBuilder.append("대기 습도가 너무 낮습니다(").append(data.getMoisture()).append("%). ");
             shouldAlert = true;
         }
