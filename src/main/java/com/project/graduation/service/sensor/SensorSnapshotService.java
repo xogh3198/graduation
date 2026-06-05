@@ -29,10 +29,12 @@ public class SensorSnapshotService {
 
         if (latest != null) {
             snapshot.setMoisture(latest.getMoisture());
+            snapshot.setSoilMoisture(latest.getSoilMoisture());
             snapshot.setTemperature(latest.getTemperature());
             snapshot.setLight(latest.getLight());
         } else {
             snapshot.setMoisture(35.0);
+            snapshot.setSoilMoisture(35.0);
             snapshot.setTemperature(22.0);
             snapshot.setLight(12000.0);
         }

@@ -17,21 +17,57 @@ AWS_IOT_ROOT_CA_PATH=/app/certs/AmazonRootCA1.pem
 AI_SERVER_BASE_URL=http://100.95.251.67:30800
 ```
 
-## MQTT 토픽 (라즈베리파이 → 메인 서버)
+## MQTT 토픽 (라즈베리파이 ↔ 메인 서버)
 
-| 용도 | 토픽 | payload |
-|------|------|---------|
-| 센서 | `plants/plant-1/telemetry` | `messageType`, `sensors.*` |
-| 제어(급수/LED) | `plants/plant-1/command` | `messageType`, `actuators.*` |
-| 사진(S3) | `plants/plant-1/status/photo` | `plantId`, `imageUrl` |
+설정 파일: [`raspberry/mqtt.env.example`](../raspberry/mqtt.env.example)
 
-페이로드 예 (사진):
+| 방향 | 용도 | 토픽 | QoS |
+|------|------|------|-----|
+| Pi → 서버 | 센서 | `plants/plant-1/telemetry` | 1 |
+| Pi → 서버 | 사진 URL 요청 | `plants/plant-1/photo/request` | 1 |
+| 서버 → Pi | 사진 URL 응답 (구독) | `plants/plant-1/photo/response` | 1 |
+| 서버 → Pi | 급수/LED 제어 (구독) | `plants/plant-1/command` | 1 |
+
+### 사진 URL 요청 payload (Pi → 서버)
 
 ```json
 {
   "plantId": "plant-1",
-  "imageUrl": "https://버킷.s3.amazonaws.com/plants/plant-1/photo.jpg"
+  "deviceId": "rpi4-001",
+  "contentType": "image/jpeg",
+  "fileName": "photo.jpg"
 }
 ```
+
+### 사진 URL 응답 payload (서버 → Pi)
+
+```json
+{
+  "plantId": "plant-1",
+  "uploadUrl": "https://...",
+  "contentType": "image/jpeg",
+  "imageUrl": "https://bucket.s3.us-east-1.amazonaws.com/...",
+  "expiresInSeconds": 900
+}
+```
+
+Pi는 `uploadUrl`로 HTTP PUT 후 종료. 상세: [docs/PLANT_ID.md](../docs/PLANT_ID.md)
+
+## AWS IoT 정책 (라즈베리 Thing)
+
+| 동작 | Resource |
+|------|----------|
+| `iot:Connect` | `*` |
+| `iot:Publish` | `plants/plant-1/telemetry`, `plants/plant-1/photo/request` |
+| `iot:Subscribe` | `plants/plant-1/photo/response`, `plants/plant-1/command` |
+| `iot:Receive` | 위 subscribe 토픽과 동일 |
+
+`plant-1`은 실제 `externalPlantId`로 바꿉니다.
+
+---
+
+## (구) 사진 완료 알림 — 선택
+
+| Pi → 서버 | `plants/plant-1/status/photo` | `plantId`, `imageUrl` |
 
 plantId 규칙 상세: [docs/PLANT_ID.md](../docs/PLANT_ID.md)

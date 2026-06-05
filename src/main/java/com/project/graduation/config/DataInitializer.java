@@ -46,7 +46,7 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void seedDemoRaspberrySensorData() {
-        createLatestSnapshot(35.0, 22.0, 12000.0, "건조함", false, "없음");
+        createLatestSnapshot(35.0, 35.0, 22.0, 12000.0, false, "없음");
 
         LocalDateTime base = LocalDateTime.now().minusDays(3);
         saveHistoryPoint(SensorType.moisture, "30", base);
@@ -58,15 +58,15 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void createLatestSnapshot(
-            double moisture, double temperature, double light,
-            String soilStatus, boolean hasBug, String disease) {
+            double soilMoisture, double humidity, double temperature, double light,
+            boolean hasBug, String disease) {
         SensorData data = new SensorData();
         data.setDeviceId(DEMO_DEVICE_ID);
         data.setTopic("device/sensor/" + DEMO_DEVICE_ID);
-        data.setMoisture(moisture);
+        data.setSoilMoisture(soilMoisture);
+        data.setMoisture(humidity);
         data.setTemperature(temperature);
         data.setLight(light);
-        data.setSoilStatus(soilStatus);
         data.setHasBug(hasBug);
         data.setDisease(disease);
         data.setTimestamp(LocalDateTime.now());

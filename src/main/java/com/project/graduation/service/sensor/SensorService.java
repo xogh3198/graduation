@@ -34,10 +34,7 @@ public class SensorService {
                 metric(latest.getMoisture(), SensorStatusEvaluator.evaluateMoisture(latest.getMoisture())),
                 metric(latest.getTemperature(), SensorStatusEvaluator.evaluateTemperature(latest.getTemperature())),
                 metric(latest.getLight(), SensorStatusEvaluator.evaluateLight(latest.getLight())),
-                new SensorMetricResponse<>(
-                        latest.getSoilStatus() != null ? latest.getSoilStatus() : "정상",
-                        SensorStatusEvaluator.evaluateSoil(latest.getSoilStatus())
-                ),
+                metric(resolveSoilMoisture(latest), SensorStatusEvaluator.evaluateSoilMoisture(resolveSoilMoisture(latest))),
                 new SensorMetricResponse<>(
                         Boolean.TRUE.equals(latest.getHasBug()),
                         SensorStatusEvaluator.evaluateBug(latest.getHasBug())
@@ -70,6 +67,14 @@ public class SensorService {
                 .toList();
     }
 
+    private Double resolveSoilMoisture(SensorData data) {
+        if (data.getSoilMoisture() != null) {
+            return data.getSoilMoisture();
+        }
+        // legacy: soilMoisturePct가 moisture 컬럼에만 저장된 경우
+        return data.getMoisture();
+    }
+
     private <T> SensorMetricResponse<T> metric(T value, com.project.graduation.domain.sensor.HealthStatus status) {
         return new SensorMetricResponse<>(value, status);
     }
@@ -78,9 +83,9 @@ public class SensorService {
         SensorData data = new SensorData();
         data.setPlantId(plantId);
         data.setMoisture(35.0);
+        data.setSoilMoisture(35.0);
         data.setTemperature(22.0);
         data.setLight(12000.0);
-        data.setSoilStatus("건조함");
         data.setHasBug(false);
         data.setDisease("없음");
         data.setTimestamp(LocalDateTime.now());

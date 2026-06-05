@@ -45,8 +45,7 @@ public class IotTelemetryService {
                 data.setLight(sensors.getLux());
             }
             if (sensors.getSoilMoisturePct() != null) {
-                data.setMoisture(sensors.getSoilMoisturePct());
-                data.setSoilStatus(mapSoilStatus(sensors.getSoilMoisturePct()));
+                data.setSoilMoisture(sensors.getSoilMoisturePct());
             }
             if (sensors.getTemperatureC() != null) {
                 data.setTemperature(sensors.getTemperatureC());
@@ -65,8 +64,8 @@ public class IotTelemetryService {
         });
 
         sensorDataRepository.save(data);
-        log.info("IoT telemetry 저장 topic={}, plantId={}, deviceId={}, lux={}, soilMoisturePct={}",
-                topic, plantRef, data.getDeviceId(), data.getLight(), data.getMoisture());
+        log.info("IoT telemetry 저장 topic={}, plantId={}, deviceId={}, lux={}, soilMoisturePct={}, humidityPct={}",
+                topic, plantRef, data.getDeviceId(), data.getLight(), data.getSoilMoisture(), data.getMoisture());
     }
 
     private java.util.Optional<Plant> resolvePlant(String plantRef, String deviceId) {
@@ -93,13 +92,6 @@ public class IotTelemetryService {
         return null;
     }
 
-    private String mapSoilStatus(double soilMoisturePct) {
-        if (soilMoisturePct < 30.0) {
-            return "DRY";
-        }
-        return "MOIST";
-    }
-
     private void checkSensorAlerts(Plant plant, SensorData data) {
         long now = System.currentTimeMillis();
         Long lastTime = lastAlertTime.get(plant.getId());
@@ -121,13 +113,11 @@ public class IotTelemetryService {
             }
         }
 
-        if (data.getMoisture() != null && data.getMoisture() < 20.0) {
-            msgBuilder.append("습도/토양 수분이 너무 낮습니다(").append(data.getMoisture()).append("%). ");
+        if (data.getSoilMoisture() != null && data.getSoilMoisture() < 30.0) {
+            msgBuilder.append("흙이 말랐습니다(").append(data.getSoilMoisture()).append("%). ");
             shouldAlert = true;
-        }
-
-        if ("DRY".equalsIgnoreCase(data.getSoilStatus())) {
-            msgBuilder.append("흙이 말랐습니다. 물을 주세요! ");
+        } else if (data.getMoisture() != null && data.getMoisture() < 20.0) {
+            msgBuilder.append("대기 습도가 너무 낮습니다(").append(data.getMoisture()).append("%). ");
             shouldAlert = true;
         }
 

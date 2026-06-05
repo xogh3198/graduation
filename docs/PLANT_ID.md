@@ -7,13 +7,78 @@
 | DB PK | `Plant.id` (Long) | `1` |
 | REST API path | Long (`/api/v1/plants/1`) | `1` |
 | AI 서버 요청 | `plant-{id}` | `plant-1` |
-| AWS IoT MQTT topic (사진) | `plants/plant-{id}/status/photo` | `plants/plant-1/status/photo` |
+| AWS IoT MQTT topic (사진 URL 요청) | `plants/plant-{id}/photo/request` | `plants/plant-1/photo/request` |
+| AWS IoT MQTT topic (사진 URL 응답) | `plants/plant-{id}/photo/response` | `plants/plant-1/photo/response` |
+| AWS IoT MQTT topic (사진 완료 알림, 선택) | `plants/plant-{id}/status/photo` | `plants/plant-1/status/photo` |
 | AWS IoT MQTT topic (센서) | `plants/plant-{id}/telemetry` | `plants/plant-1/telemetry` |
 | AWS IoT MQTT topic (제어) | `plants/plant-{id}/command` | `plants/plant-1/command` |
 | 라즈베리 센서 MQTT | `device/sensor/{deviceId}` | `device/sensor/pi-001` |
 | 디바이스 식별 | `Plant.deviceId` | `pi-001` |
 
-## MQTT 사진 업로드 (S3 완료 알림)
+## MQTT 사진 업로드 (Presigned URL — 권장)
+
+라즈베리 설정 예시: [`raspberry/mqtt.env.example`](../raspberry/mqtt.env.example)  
+실행 예시: [`raspberry/photo_upload_mqtt.py`](../raspberry/photo_upload_mqtt.py)
+
+### 1) URL 요청 — Pi → 서버
+
+- **Topic:** `plants/plant-1/photo/request`
+- **QoS:** `1`
+- **Payload:**
+  ```json
+  {
+    "plantId": "plant-1",
+    "deviceId": "rpi4-001",
+    "contentType": "image/jpeg",
+    "fileName": "photo.jpg"
+  }
+  ```
+- `plantId`: 식물 등록 응답의 `externalPlantId` (예: `plant-1`)
+- `deviceId`: 식물 등록 시 `deviceId` (예: `rpi4-001`)
+- `contentType`: PUT 업로드 시 사용할 MIME (기본 `image/jpeg`)
+- `fileName`: 참고용 (서버 키 생성에만 참고, 필수 아님)
+- `plantId` 생략 시 topic 두 번째 세그먼트(`plant-1`) 사용
+
+### 2) URL 응답 — 서버 → Pi (구독)
+
+- **Topic:** `plants/plant-1/photo/response`
+- **QoS:** `1`
+- **Payload (성공):**
+  ```json
+  {
+    "plantId": "plant-1",
+    "uploadUrl": "https://bucket.s3.us-east-1.amazonaws.com/...?X-Amz-...",
+    "bucket": "your-bucket",
+    "s3Key": "plants/plant-1/photos/1717500000000-uuid.jpg",
+    "contentType": "image/jpeg",
+    "imageUrl": "https://your-bucket.s3.us-east-1.amazonaws.com/plants/plant-1/photos/....jpg",
+    "expiresInSeconds": 900,
+    "expiresAt": "2026-06-04T13:10:00Z"
+  }
+  ```
+- **Payload (실패):**
+  ```json
+  {
+    "plantId": "plant-1",
+    "error": "등록되지 않은 plantId입니다: plant-1"
+  }
+  ```
+
+### 3) S3 업로드 — Pi → S3 (MQTT 없음)
+
+```bash
+curl -X PUT -T photo.jpg \
+  -H "Content-Type: image/jpeg" \
+  "<uploadUrl>"
+```
+
+- `Content-Type`은 response의 `contentType`과 **동일**해야 함
+- 업로드 후 **추가 MQTT 전송 없음**
+
+## MQTT 사진 업로드 (S3 완료 알림 — 선택, AI 분석 트리거용)
+
+Presigned URL 플로우만 쓰면 서버 AI 분석이 자동으로 안 돕니다.  
+업로드 후 분석까지 필요하면 아래를 **추가** publish 하거나 S3 Event를 쓰세요.
 
 - **Topic:** `plants/plant-1/status/photo`
 - **Payload:**
@@ -49,7 +114,7 @@
     }
   }
   ```
-- `lux` → `light`, `soilMoisturePct` → `moisture`/`soilStatus`, `temperatureC`/`humidityPct` 매핑
+- `lux` → `light`, `soilMoisturePct` → `soilMoisture`(%), `humidityPct` → `moisture`(%) 매핑
 - `plantId` 또는 `deviceId`로 DB 식물 연결
 
 ## MQTT 액추에이터 제어 (AWS IoT Core, 서버 → 라즈베리)

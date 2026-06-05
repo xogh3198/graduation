@@ -58,8 +58,16 @@ public class MqttService {
             if (jsonNode.has("light")) {
                 data.setLight(jsonNode.get("light").asDouble());
             }
+            if (jsonNode.has("soilMoisturePct")) {
+                data.setSoilMoisture(jsonNode.get("soilMoisturePct").asDouble());
+            }
             if (jsonNode.has("soil")) {
-                data.setSoilStatus(jsonNode.get("soil").asText());
+                JsonNode soilNode = jsonNode.get("soil");
+                if (soilNode.isNumber()) {
+                    data.setSoilMoisture(soilNode.asDouble());
+                } else {
+                    data.setSoilStatus(soilNode.asText());
+                }
             }
             if (jsonNode.has("bug")) {
                 data.setHasBug(jsonNode.get("bug").asBoolean());
@@ -109,7 +117,10 @@ public class MqttService {
             shouldAlert = true;
         }
 
-        if ("DRY".equalsIgnoreCase(data.getSoilStatus())) {
+        if (data.getSoilMoisture() != null && data.getSoilMoisture() < 30.0) {
+            msgBuilder.append("흙이 말랐습니다(").append(data.getSoilMoisture()).append("%). ");
+            shouldAlert = true;
+        } else if ("DRY".equalsIgnoreCase(data.getSoilStatus())) {
             msgBuilder.append("흙이 말랐습니다. 물을 주세요! ");
             shouldAlert = true;
         }

@@ -75,12 +75,12 @@ public class DeathAnalysisService {
         String timestamp = data.getTimestamp() != null
                 ? data.getTimestamp().format(ISO_FORMAT)
                 : LocalDateTime.now().format(ISO_FORMAT);
-        Double moisture = data.getMoisture();
+        Double soilMoisture = data.getSoilMoisture() != null ? data.getSoilMoisture() : data.getMoisture();
         return new DeathSensorHistoryItem(
                 timestamp,
-                moisture,
+                soilMoisture,
                 data.getTemperature(),
-                moisture,
+                soilMoisture,
                 data.getLight()
         );
     }

@@ -13,6 +13,9 @@ public class AwsIotProperties {
     private String endpoint = "amtgq6rjeeepu-ats.iot.us-east-1.amazonaws.com";
     private String clientId = "graduation-backend";
     private String photoTopic = "plants/+/status/photo";
+    private String photoRequestTopic = "plants/+/photo/request";
+    /** publish topic: plants/plant-1/{suffix} */
+    private String photoResponseTopicSuffix = "photo/response";
     private String telemetryTopic = "plants/+/telemetry";
     /** publish topic: plants/plant-1/{suffix} */
     private String commandTopicSuffix = "command";

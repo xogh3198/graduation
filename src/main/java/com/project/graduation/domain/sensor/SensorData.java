@@ -26,6 +26,8 @@ public class SensorData {
 
     private Double moisture;
 
+    private Double soilMoisture;
+
     private Double temperature;
 
     private Double light;

@@ -28,6 +28,13 @@ public final class SensorStatusEvaluator {
         return HealthStatus.good;
     }
 
+    public static HealthStatus evaluateSoilMoisture(Double value) {
+        if (value == null) return HealthStatus.warning;
+        if (value < 20) return HealthStatus.critical;
+        if (value < 30) return HealthStatus.warning;
+        return HealthStatus.good;
+    }
+
     public static HealthStatus evaluateSoil(String soilStatus) {
         if (soilStatus == null) return HealthStatus.warning;
         if (soilStatus.contains("건조") || soilStatus.contains("과습")) return HealthStatus.warning;

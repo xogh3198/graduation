@@ -35,11 +35,18 @@ app:
   init-dummy-data: ${APP_INIT_DUMMY_DATA:true}
 
 aws:
+  s3:
+    bucket: ${AWS_S3_BUCKET:}
+    region: ${AWS_REGION:us-east-1}
+    key-prefix: ${AWS_S3_KEY_PREFIX:plants}
+    presign-expiration-minutes: ${AWS_S3_PRESIGN_EXPIRATION_MINUTES:15}
   iot:
     enabled: ${AWS_IOT_ENABLED:false}
     endpoint: ${AWS_IOT_ENDPOINT:amtgq6rjeeepu-ats.iot.us-east-1.amazonaws.com}
     client-id: ${AWS_IOT_CLIENT_ID:graduation-backend}
     photo-topic: ${AWS_IOT_PHOTO_TOPIC:plants/+/status/photo}
+    photo-request-topic: ${AWS_IOT_PHOTO_REQUEST_TOPIC:plants/+/photo/request}
+    photo-response-topic-suffix: ${AWS_IOT_PHOTO_RESPONSE_TOPIC_SUFFIX:photo/response}
     telemetry-topic: ${AWS_IOT_TELEMETRY_TOPIC:plants/+/telemetry}
     command-topic-suffix: ${AWS_IOT_COMMAND_TOPIC_SUFFIX:command}
     certificate-path: ${AWS_IOT_CERT_PATH:}
