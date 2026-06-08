@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -53,18 +55,53 @@ public class SensorService {
         LocalDateTime start = LocalDate.parse(startDate).atStartOfDay();
         LocalDateTime end = LocalDate.parse(endDate).atTime(LocalTime.MAX);
 
-        List<SensorData> records;
+        SensorType filterType = null;
         if (type != null && !type.isBlank()) {
-            SensorType sensorType = SensorType.valueOf(type.toLowerCase());
-            records = sensorDataRepository.findByPlantIdAndTypeAndTimestampBetweenOrderByTimestampAsc(
-                    plant.getId(), sensorType, start, end);
-        } else {
-            records = sensorDataRepository.findHistory(plant.getId(), start, end);
+            filterType = SensorType.valueOf(type.toLowerCase());
         }
 
+        List<SensorData> records = sensorDataRepository.findByPlantIdAndTimestampBetweenOrderByTimestampAsc(
+                plant.getId(), start, end);
+
+        SensorType finalFilterType = filterType;
         return records.stream()
-                .map(r -> new SensorHistoryItemResponse(r.getTimestamp(), r.getValue(), r.getType()))
+                .flatMap(record -> toHistoryItems(record).stream())
+                .filter(item -> finalFilterType == null || item.getType() == finalFilterType)
+                .sorted(Comparator.comparing(SensorHistoryItemResponse::getTimestamp))
                 .toList();
+    }
+
+    private List<SensorHistoryItemResponse> toHistoryItems(SensorData record) {
+        if (record.getType() != null && record.getValue() != null) {
+            return List.of(new SensorHistoryItemResponse(
+                    record.getTimestamp(), record.getValue(), record.getType()));
+        }
+
+        List<SensorHistoryItemResponse> items = new ArrayList<>();
+        if (record.getMoisture() != null) {
+            items.add(historyPoint(record, SensorType.moisture, record.getMoisture()));
+        }
+        if (record.getSoilMoisture() != null) {
+            items.add(historyPoint(record, SensorType.soil, record.getSoilMoisture()));
+        }
+        if (record.getTemperature() != null) {
+            items.add(historyPoint(record, SensorType.temperature, record.getTemperature()));
+        }
+        if (record.getLight() != null) {
+            items.add(historyPoint(record, SensorType.light, record.getLight()));
+        }
+        if (record.getHasBug() != null) {
+            items.add(historyPoint(record, SensorType.bug, record.getHasBug()));
+        }
+        if (record.getDisease() != null && !record.getDisease().isBlank()) {
+            items.add(new SensorHistoryItemResponse(
+                    record.getTimestamp(), record.getDisease(), SensorType.disease));
+        }
+        return items;
+    }
+
+    private SensorHistoryItemResponse historyPoint(SensorData record, SensorType type, Object value) {
+        return new SensorHistoryItemResponse(record.getTimestamp(), String.valueOf(value), type);
     }
 
     private Double resolveSoilMoisture(SensorData data) {

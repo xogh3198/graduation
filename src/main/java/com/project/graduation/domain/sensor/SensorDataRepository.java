@@ -21,6 +21,9 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
     List<SensorData> findByPlantIdAndTypeAndTimestampBetweenOrderByTimestampAsc(
             Long plantId, SensorType type, LocalDateTime start, LocalDateTime end);
 
+    List<SensorData> findByPlantIdAndTimestampBetweenOrderByTimestampAsc(
+            Long plantId, LocalDateTime start, LocalDateTime end);
+
     @Query("""
             SELECT s FROM SensorData s
             WHERE s.plantId = :plantId AND s.type IS NOT NULL
