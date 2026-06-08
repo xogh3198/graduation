@@ -22,7 +22,7 @@ public class LoggingIotControlPublisher implements IotControlPublisher {
     public void publishCommand(Plant plant, ControlCommandMqttPayload payload) {
         try {
             String topic = "plants/" + plantIdResolver.toExternalId(plant.getId()) + "/command";
-            log.info("IoT 비활성 — 제어 명령 로그만 출력 topic={}, payload={}",
+            log.info("[MQTT 발신] IoT 비활성 — 명령 로그만 출력 — 토픽: {}, 내용: {}",
                     topic, objectMapper.writeValueAsString(payload));
         } catch (Exception e) {
             log.warn("제어 명령 로그 출력 실패 plantId={}", plant.getId(), e);

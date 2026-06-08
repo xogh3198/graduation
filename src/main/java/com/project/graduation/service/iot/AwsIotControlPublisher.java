@@ -39,7 +39,7 @@ public class AwsIotControlPublisher implements IotControlPublisher {
             MqttMessage message = new MqttMessage(json.getBytes());
             message.setQos(1);
             mqttClient.publish(topic, message);
-            log.info("AWS IoT 제어 명령 publish topic={}, payload={}", topic, json);
+            log.info("[MQTT 발신] 라즈베리파이로 명령 전송 — 토픽: {}, 내용: {}", topic, json);
         } catch (Exception e) {
             log.error("AWS IoT 제어 명령 publish 실패 plantId={}", plant.getId(), e);
             throw new ApiException(HttpStatus.BAD_GATEWAY, "IoT Core 제어 명령 전송에 실패했습니다.");

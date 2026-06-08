@@ -35,6 +35,7 @@ public class MqttService {
     public void processMessage(Message<String> message) {
         String payload = message.getPayload();
         String topic = message.getHeaders().get("mqtt_receivedTopic", String.class);
+        log.info("[MQTT 수신] 토픽: {}, 내용: {}", topic, payload);
 
         try {
             JsonNode jsonNode = objectMapper.readTree(payload);

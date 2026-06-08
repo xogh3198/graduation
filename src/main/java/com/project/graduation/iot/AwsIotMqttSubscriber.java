@@ -78,6 +78,7 @@ public class AwsIotMqttSubscriber implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) {
         String payload = new String(message.getPayload());
+        log.info("[MQTT 수신] AWS IoT — 토픽: {}, 내용: {}", topic, payload);
         try {
             if (isTelemetryTopic(topic, payload)) {
                 TelemetryMqttPayload event = objectMapper.readValue(payload, TelemetryMqttPayload.class);
