@@ -37,4 +37,12 @@ public class Plant {
 
     @Enumerated(EnumType.STRING)
     private PlantStatus status = PlantStatus.good;
+
+    private Boolean autoWaterEnabled = false;
+
+    private Double autoWaterThreshold;
+
+    private Boolean autoLightEnabled = false;
+
+    private Double autoLightThreshold;
 }

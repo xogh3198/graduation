@@ -38,4 +38,20 @@ public class PlantControlController {
         return ResponseEntity.ok(controlService.led(
                 AuthUser.getCurrentUserId(), plantId, request));
     }
+
+    @PostMapping("/auto-water")
+    public ResponseEntity<AutoControlResponse> autoWater(
+            @PathVariable Long plantId,
+            @Valid @RequestBody AutoControlRequest request) {
+        return ResponseEntity.ok(controlService.configureAutoWater(
+                AuthUser.getCurrentUserId(), plantId, request));
+    }
+
+    @PostMapping("/auto-light")
+    public ResponseEntity<AutoControlResponse> autoLight(
+            @PathVariable Long plantId,
+            @Valid @RequestBody AutoControlRequest request) {
+        return ResponseEntity.ok(controlService.configureAutoLight(
+                AuthUser.getCurrentUserId(), plantId, request));
+    }
 }

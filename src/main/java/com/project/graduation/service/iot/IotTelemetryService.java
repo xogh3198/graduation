@@ -4,6 +4,7 @@ import com.project.graduation.domain.plant.Plant;
 import com.project.graduation.domain.sensor.SensorData;
 import com.project.graduation.domain.sensor.SensorDataRepository;
 import com.project.graduation.dto.iot.TelemetryMqttPayload;
+import com.project.graduation.service.control.PlantAutomationService;
 import com.project.graduation.service.notification.NotificationService;
 import com.project.graduation.util.PlantIdResolver;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class IotTelemetryService {
     private final SensorDataRepository sensorDataRepository;
     private final PlantIdResolver plantIdResolver;
     private final NotificationService notificationService;
+    private final PlantAutomationService plantAutomationService;
 
     private final Map<Long, Long> lastAlertTime = new ConcurrentHashMap<>();
     private static final long ALERT_COOLDOWN_MS = 60 * 60 * 1000;
@@ -61,6 +63,7 @@ public class IotTelemetryService {
                 data.setDeviceId(plant.getDeviceId());
             }
             checkSensorAlerts(plant, data);
+            plantAutomationService.applyAutomation(plant, data);
         });
 
         sensorDataRepository.save(data);

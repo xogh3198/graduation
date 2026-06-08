@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface NotificationHistoryRepository extends JpaRepository<NotificationHistory, Long> {
     List<NotificationHistory> findByUserIdOrderByCreatedAtDesc(Long userId);
+
+    void deleteByUserId(Long userId);
 }

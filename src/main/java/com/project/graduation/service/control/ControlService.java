@@ -1,6 +1,8 @@
 package com.project.graduation.service.control;
 
 import com.project.graduation.domain.plant.Plant;
+import com.project.graduation.dto.control.AutoControlRequest;
+import com.project.graduation.dto.control.AutoControlResponse;
 import com.project.graduation.dto.control.ControlResponse;
 import com.project.graduation.dto.control.LedControlRequest;
 import com.project.graduation.dto.iot.ControlCommandMqttPayload;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -50,6 +53,35 @@ public class ControlService {
         iotControlPublisher.publishCommand(plant, payload);
         String message = brightness > 0 ? "LED가 켜졌습니다." : "LED가 꺼졌습니다.";
         return ControlResponse.ledSuccess(message, brightness);
+    }
+
+    @Transactional
+    public AutoControlResponse configureAutoWater(Long userId, Long plantId, AutoControlRequest request) {
+        Plant plant = plantService.getOwnedPlant(userId, plantId);
+        validateSoilThreshold(request.getThreshold());
+        plant.setAutoWaterEnabled(request.getEnabled());
+        plant.setAutoWaterThreshold(request.getThreshold());
+        String message = request.getEnabled()
+                ? "스마트 자동 물주기가 활성화되었습니다."
+                : "스마트 자동 물주기가 비활성화되었습니다.";
+        return new AutoControlResponse("success", message, request.getEnabled(), request.getThreshold());
+    }
+
+    @Transactional
+    public AutoControlResponse configureAutoLight(Long userId, Long plantId, AutoControlRequest request) {
+        Plant plant = plantService.getOwnedPlant(userId, plantId);
+        plant.setAutoLightEnabled(request.getEnabled());
+        plant.setAutoLightThreshold(request.getThreshold());
+        String message = request.getEnabled()
+                ? "스마트 자동 햇빛이 활성화되었습니다."
+                : "스마트 자동 햇빛이 비활성화되었습니다.";
+        return new AutoControlResponse("success", message, request.getEnabled(), request.getThreshold());
+    }
+
+    private void validateSoilThreshold(double threshold) {
+        if (threshold < 0 || threshold > 100) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "토양 습도 임계값은 0~100 사이여야 합니다.");
+        }
     }
 
     private Plant requirePlantWithDevice(Long userId, Long plantId) {

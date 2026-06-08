@@ -6,6 +6,7 @@ import com.project.graduation.domain.plant.Plant;
 import com.project.graduation.domain.plant.PlantRepository;
 import com.project.graduation.domain.sensor.SensorData;
 import com.project.graduation.domain.sensor.SensorDataRepository;
+import com.project.graduation.service.control.PlantAutomationService;
 import com.project.graduation.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class MqttService {
     private final PlantRepository plantRepository;
     private final ObjectMapper objectMapper;
     private final NotificationService notificationService;
+    private final PlantAutomationService plantAutomationService;
 
     private final Map<Long, Long> lastAlertTime = new ConcurrentHashMap<>();
     private static final long ALERT_COOLDOWN_MS = 60 * 60 * 1000;
@@ -81,6 +83,7 @@ public class MqttService {
                         .ifPresent(plant -> {
                             data.setPlantId(plant.getId());
                             checkSensorAlerts(plant, data);
+                            plantAutomationService.applyAutomation(plant, data);
                         });
             }
 

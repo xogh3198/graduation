@@ -4,6 +4,7 @@ import com.project.graduation.domain.notification.NotificationHistory;
 import com.project.graduation.domain.notification.NotificationHistoryRepository;
 import com.project.graduation.domain.user.User;
 import com.project.graduation.domain.user.UserRepository;
+import com.project.graduation.dto.common.StatusResponse;
 import com.project.graduation.dto.notification.NotificationResponse;
 import com.project.graduation.dto.user.UserMeResponse;
 import com.project.graduation.exception.ApiException;
@@ -35,6 +36,12 @@ public class UserService {
         return notificationHistoryRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
                 .map(NotificationResponse::from)
                 .toList();
+    }
+
+    @Transactional
+    public StatusResponse clearAllNotifications(Long userId) {
+        notificationHistoryRepository.deleteByUserId(userId);
+        return new StatusResponse("success");
     }
 
     @Transactional(readOnly = true)

@@ -45,6 +45,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getMyNotifications(AuthUser.getCurrentUserId()));
     }
 
+    @DeleteMapping("/me/notifications")
+    public ResponseEntity<StatusResponse> clearAllNotifications() {
+        return ResponseEntity.ok(userService.clearAllNotifications(AuthUser.getCurrentUserId()));
+    }
+
     @GetMapping("/me/fcm-test")
     public ResponseEntity<Map<String, String>> testFcm() {
         userService.testFcm(AuthUser.getCurrentUserId());
