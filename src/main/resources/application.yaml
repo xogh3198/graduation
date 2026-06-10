@@ -48,7 +48,7 @@ aws:
     channel-name: ${AWS_KVS_CHANNEL_NAME:inha-capstone-07-pi-camera-channel}
     master-role-arn: ${AWS_KVS_MASTER_ROLE_ARN:}
     viewer-role-arn: ${AWS_KVS_VIEWER_ROLE_ARN:}
-    master-duration-seconds: ${AWS_KVS_MASTER_DURATION_SECONDS:43200}
+    master-duration-seconds: ${AWS_KVS_MASTER_DURATION_SECONDS:3600}
     viewer-duration-seconds: ${AWS_KVS_VIEWER_DURATION_SECONDS:3600}
     camera-token-request-topic: ${AWS_KVS_CAMERA_TOKEN_REQUEST_TOPIC:plants/+/camera/token/request}
     camera-token-response-suffix: ${AWS_KVS_CAMERA_TOKEN_RESPONSE_SUFFIX:camera/token/response}

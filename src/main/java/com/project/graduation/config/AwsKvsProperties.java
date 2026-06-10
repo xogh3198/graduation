@@ -14,7 +14,7 @@ public class AwsKvsProperties {
     private String channelName = "inha-capstone-07-pi-camera-channel";
     private String masterRoleArn = "";
     private String viewerRoleArn = "";
-    private int masterDurationSeconds = 43200;
+    private int masterDurationSeconds = 3600;
     private int viewerDurationSeconds = 3600;
     private String cameraTokenRequestTopic = "plants/+/camera/token/request";
     private String cameraTokenResponseSuffix = "camera/token/response";

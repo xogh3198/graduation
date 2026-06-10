@@ -83,8 +83,11 @@ public class KvsTokenService {
         );
     }
 
+    private static final int STS_MAX_SESSION_SECONDS = 3600;
+
     private KvsTokenResponse assumeRole(String roleArn, String sessionName, int durationSeconds, String role) {
         validateRoleArn(roleArn, role);
+        int effectiveDuration = clampDurationSeconds(durationSeconds);
         StsClient stsClient = stsClientProvider.getIfAvailable();
         if (stsClient == null) {
             throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "KVS STS 클라이언트를 사용할 수 없습니다.");
@@ -94,7 +97,7 @@ public class KvsTokenService {
             Credentials credentials = stsClient.assumeRole(AssumeRoleRequest.builder()
                     .roleArn(roleArn)
                     .roleSessionName(sessionName)
-                    .durationSeconds(durationSeconds)
+                    .durationSeconds(effectiveDuration)
                     .build()).credentials();
 
             return new KvsTokenResponse(
@@ -130,5 +133,15 @@ public class KvsTokenService {
             throw new ApiException(HttpStatus.BAD_REQUEST, "X-Device-Id 헤더가 필요합니다.");
         }
         return deviceId.trim();
+    }
+
+    private int clampDurationSeconds(int durationSeconds) {
+        if (durationSeconds > STS_MAX_SESSION_SECONDS) {
+            log.warn("KVS 토큰 duration {}s 가 IAM Role 최대 {}s 초과 — {}s 로 조정합니다. "
+                            + "(12시간이 필요하면 IAM Role MaxSessionDuration을 늘리세요.)",
+                    durationSeconds, STS_MAX_SESSION_SECONDS, STS_MAX_SESSION_SECONDS);
+            return STS_MAX_SESSION_SECONDS;
+        }
+        return durationSeconds;
     }
 }

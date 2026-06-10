@@ -23,7 +23,7 @@
 
 1. 리전 **us-east-1**
 2. KVS 시그널링 채널: `inha-capstone-07-pi-camera-channel`
-3. IAM Role: master / viewer
+3. IAM Role: master / viewer (MaxSessionDuration 기본 1시간 — 코드도 3600초 요청)
 4. EC2 Role: `sts:AssumeRole`
 5. IoT 정책: `command` 토픽 publish/subscribe (기존 `iot:*` 정책이면 추가 불필요)
 
