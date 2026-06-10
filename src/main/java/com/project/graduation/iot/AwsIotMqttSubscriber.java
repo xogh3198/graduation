@@ -2,10 +2,13 @@ package com.project.graduation.iot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.graduation.config.AwsIotProperties;
+import com.project.graduation.config.AwsKvsProperties;
+import com.project.graduation.dto.iot.CameraTokenRequestMqttPayload;
 import com.project.graduation.dto.iot.PhotoRequestMqttPayload;
 import com.project.graduation.dto.iot.PhotoUploadMqttPayload;
 import com.project.graduation.dto.iot.TelemetryMqttPayload;
 import com.project.graduation.service.ai.PhotoAnalysisService;
+import com.project.graduation.service.cam.KvsCameraTokenMqttService;
 import com.project.graduation.service.iot.IotPhotoPresignService;
 import com.project.graduation.service.iot.IotTelemetryService;
 import jakarta.annotation.PreDestroy;
@@ -30,9 +33,11 @@ import org.springframework.stereotype.Component;
 public class AwsIotMqttSubscriber implements MqttCallback {
 
     private final AwsIotProperties awsIotProperties;
+    private final AwsKvsProperties awsKvsProperties;
     private final PhotoAnalysisService photoAnalysisService;
     private final IotTelemetryService iotTelemetryService;
     private final ObjectProvider<IotPhotoPresignService> iotPhotoPresignServiceProvider;
+    private final ObjectProvider<KvsCameraTokenMqttService> kvsCameraTokenMqttServiceProvider;
     private final ObjectMapper objectMapper;
 
     private MqttClient mqttClient;
@@ -59,14 +64,25 @@ public class AwsIotMqttSubscriber implements MqttCallback {
         String photoTopic = awsIotProperties.getPhotoTopic();
         String photoRequestTopic = awsIotProperties.getPhotoRequestTopic();
         String telemetryTopic = awsIotProperties.getTelemetryTopic();
+        String cameraTokenRequestTopic = awsKvsProperties.isEnabled()
+                ? awsKvsProperties.getCameraTokenRequestTopic()
+                : null;
 
-        log.info("AWS IoT Core 연결 시도 endpoint={}, photoTopic={}, photoRequestTopic={}, telemetryTopic={}",
-                awsIotProperties.getEndpoint(), photoTopic, photoRequestTopic, telemetryTopic);
+        log.info("AWS IoT Core 연결 시도 endpoint={}, photoTopic={}, photoRequestTopic={}, telemetryTopic={}, cameraTokenRequestTopic={}",
+                awsIotProperties.getEndpoint(), photoTopic, photoRequestTopic, telemetryTopic, cameraTokenRequestTopic);
         mqttClient.connect(options);
-        mqttClient.subscribe(
-                new String[]{photoTopic, photoRequestTopic, telemetryTopic},
-                new int[]{1, 1, 1}
-        );
+
+        if (cameraTokenRequestTopic != null) {
+            mqttClient.subscribe(
+                    new String[]{photoTopic, photoRequestTopic, telemetryTopic, cameraTokenRequestTopic},
+                    new int[]{1, 1, 1, 1}
+            );
+        } else {
+            mqttClient.subscribe(
+                    new String[]{photoTopic, photoRequestTopic, telemetryTopic},
+                    new int[]{1, 1, 1}
+            );
+        }
         log.info("AWS IoT Core 구독 시작 완료");
     }
 
@@ -94,6 +110,17 @@ public class AwsIotMqttSubscriber implements MqttCallback {
                 }
                 PhotoRequestMqttPayload request = objectMapper.readValue(payload, PhotoRequestMqttPayload.class);
                 presignService.handlePhotoRequest(request, topic);
+                return;
+            }
+
+            if (isCameraTokenRequestTopic(topic)) {
+                KvsCameraTokenMqttService kvsService = kvsCameraTokenMqttServiceProvider.getIfAvailable();
+                if (kvsService == null) {
+                    log.error("camera/token/request 수신했으나 KVS 비활성 topic={}", topic);
+                    return;
+                }
+                CameraTokenRequestMqttPayload request = objectMapper.readValue(payload, CameraTokenRequestMqttPayload.class);
+                kvsService.handleTokenRequest(request, topic);
                 return;
             }
 
@@ -128,6 +155,10 @@ public class AwsIotMqttSubscriber implements MqttCallback {
 
     private boolean isPhotoRequestTopic(String topic) {
         return topic != null && topic.endsWith("/photo/request");
+    }
+
+    private boolean isCameraTokenRequestTopic(String topic) {
+        return topic != null && topic.endsWith("/camera/token/request");
     }
 
     private boolean isPhotoStatusTopic(String topic) {

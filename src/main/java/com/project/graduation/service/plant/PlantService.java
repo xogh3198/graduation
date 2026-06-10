@@ -8,6 +8,7 @@ import com.project.graduation.domain.sensor.SensorDataRepository;
 import com.project.graduation.dto.plant.*;
 import com.project.graduation.exception.ApiException;
 import com.project.graduation.util.PlantIdResolver;
+import com.project.graduation.util.PlantIdResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ public class PlantService {
 
     private final PlantRepository plantRepository;
     private final SensorDataRepository sensorDataRepository;
+    private final PlantIdResolver plantIdResolver;
 
     public List<PlantSummaryResponse> getMyPlants(Long userId) {
         return plantRepository.findByUserId(userId).stream()
@@ -75,6 +77,15 @@ public class PlantService {
     public Plant getOwnedPlant(Long userId, Long plantId) {
         return plantRepository.findByIdAndUserId(plantId, userId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 식물을 찾을 수 없습니다."));
+    }
+
+    public Plant getOwnedPlantByRef(String plantRef, String deviceId) {
+        Plant plant = plantIdResolver.resolvePlant(plantRef)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 식물을 찾을 수 없습니다."));
+        if (plant.getDeviceId() == null || !plant.getDeviceId().equals(deviceId)) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "deviceId가 일치하지 않습니다.");
+        }
+        return plant;
     }
 
     /** 데모·MQTT 선수신 센서 데이터를 새로 등록한 식물에 연결 */

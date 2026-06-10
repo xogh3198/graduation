@@ -6,4 +6,6 @@ import com.project.graduation.dto.iot.ControlCommandMqttPayload;
 public interface IotControlPublisher {
 
     void publishCommand(Plant plant, ControlCommandMqttPayload payload);
+
+    void publishPayload(Plant plant, Object payload);
 }

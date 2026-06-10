@@ -32,6 +32,11 @@ public class AwsIotControlPublisher implements IotControlPublisher {
 
     @Override
     public synchronized void publishCommand(Plant plant, ControlCommandMqttPayload payload) {
+        publishPayload(plant, payload);
+    }
+
+    @Override
+    public synchronized void publishPayload(Plant plant, Object payload) {
         try {
             ensureConnected();
             String topic = buildCommandTopic(plant.getId());

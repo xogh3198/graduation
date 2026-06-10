@@ -1,5 +1,6 @@
 package com.project.graduation.service.cam;
 
+import com.project.graduation.config.AwsKvsProperties;
 import com.project.graduation.dto.cam.CaptureResponse;
 import com.project.graduation.dto.cam.StreamUrlResponse;
 import com.project.graduation.service.plant.PlantService;
@@ -13,11 +14,24 @@ import java.util.UUID;
 public class CamService {
 
     private final PlantService plantService;
+    private final AwsKvsProperties awsKvsProperties;
 
     public StreamUrlResponse getStreamUrl(Long userId, Long plantId) {
         plantService.getOwnedPlant(userId, plantId);
-        String streamUrl = "rtsp://localhost:8554/plants/" + plantId + "/live";
-        return new StreamUrlResponse(streamUrl);
+        if (awsKvsProperties.isEnabled()) {
+            return new StreamUrlResponse(
+                    null,
+                    awsKvsProperties.getChannelName(),
+                    awsKvsProperties.getRegion(),
+                    "/api/v1/plants/" + plantId + "/cam/live/start"
+            );
+        }
+        return new StreamUrlResponse(
+                "rtsp://localhost:8554/plants/" + plantId + "/live",
+                null,
+                null,
+                null
+        );
     }
 
     public CaptureResponse capture(Long userId, Long plantId) {

@@ -20,6 +20,11 @@ public class LoggingIotControlPublisher implements IotControlPublisher {
 
     @Override
     public void publishCommand(Plant plant, ControlCommandMqttPayload payload) {
+        publishPayload(plant, payload);
+    }
+
+    @Override
+    public void publishPayload(Plant plant, Object payload) {
         try {
             String topic = "plants/" + plantIdResolver.toExternalId(plant.getId()) + "/command";
             log.info("[MQTT 발신] IoT 비활성 — 명령 로그만 출력 — 토픽: {}, 내용: {}",

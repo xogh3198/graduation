@@ -58,6 +58,7 @@ dependencies {
 
     implementation platform('software.amazon.awssdk:bom:2.29.45')
     implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:sts'
 
     // Firebase Admin SDK (FCM v1)
     implementation 'com.google.firebase:firebase-admin:9.4.3'
